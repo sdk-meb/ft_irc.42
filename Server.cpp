@@ -6,7 +6,7 @@
 /*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 12:28:55 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/02/23 18:27:13 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/02/28 17:32:12 by blind-eagle      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,16 @@ void    Server::handlingEvents(){
                     // std::cout << "Yes it's command!" << std::endl;
                     // need to handle the commands;
                     // std::cout << "Test  :" << _users[index].getPollExtractedData() << std::endl;
-                    parser(_users[index].getPollExtractedData().substr(0, command), index);
+                    if (parser(_users[index].getPollExtractedData().substr(0, command), index) == 1){
+						printf("fd = %d et revent = %d\n", it->fd, it->revents);
+                        close(it->fd);
+                        it = _fds.erase(it);
+                        _users.erase(_users.begin() + index);
+                        it = _fds.begin() + 1;
+                        index = 0;
+                        continue;
+                    }
+                        
                     _users[index].setPollExtractedData(_users[index].getPollExtractedData().substr(command + 1, _users[index].getPollExtractedData().size() - (command + 1)));
                 }
             }
@@ -229,6 +238,28 @@ std::string     Server::getWordInLine(std::string line, int *posPointer) const{
     }
     return (word);
 }
+
+std::vector<std::string>     Server::getVectorOfArgs(std::string line, int* posPointer){
+    std::string tmpStr;
+    std::vector<std::string> argsVector;
+
+    while (line[*posPointer] != '\r' && line[*posPointer])
+    {
+        tmpStr.clear();
+        while (line[*posPointer] == ' ' ||  line[*posPointer] == ',')
+            *posPointer += 1;
+        if (line[*posPointer] == ':')
+            return (argsVector);
+        while (line[*posPointer] != ' ' && line[*posPointer] != ','  && line[*posPointer] != '\r' && line[*posPointer]){
+            tmpStr = tmpStr + line[*posPointer];
+            *posPointer = *posPointer + 1;
+        }
+        argsVector.push_back(tmpStr);
+    }
+    return (argsVector);
+}
+
+
 
 int   Server::parser(std::string buffer, int index){
     int  i = 0;
@@ -273,14 +304,24 @@ int   Server::parser(std::string buffer, int index){
             std::string     realName = getWordInLine(line, &(posPointer));
             user(&_users[index], userName, hostName, serverName, realName);
         }
-        else if (!_users[index].isAuthenticated()){
-            std::cout << "The User is not logged in !" << std::endl;
-        }
+        // else if (!_users[index].isAuthenticated()){
+        //     userNotLoginIn(&_users[index]);
+        //     std::cout << "The User is not logged in !" << std::endl;
+        // }
         else if (command == "JOIN"){
-            std::cout << "The Command Is : JOIN" << std::endl;
+            // std::cout << "The Command Is : JOIN" << std::endl;
+            std::vector<std::string> argVector;
+            std::vector<std::string>::const_iterator it;
+            argVector = getVectorOfArgs(line, &(posPointer));
+            // for (it = argVector.begin(); it != argVector.end(); ++it)
+            //     std::cout << *it << std::endl;
+            join(&_users[index],argVector);
         }
         else if (command == "QUIT"){
             std::cout << "The Command Is : QUIT" << std::endl;
+            std::string quitMessage = getWordInLine(line, &(posPointer));
+            std::cout << quitMessage << std::endl;
+            // quit(&_users[index], quitMessage);
             return (1);
         }
         else if (command == "PART"){

@@ -6,7 +6,7 @@
 /*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 03:46:09 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/02/23 18:04:28 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/02/27 14:56:57 by blind-eagle      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,6 +286,14 @@ bool    Channel::changeUserNickName(std::string currentNickName, std::string new
         }
     }
     return (true);
+}
+
+std::vector<std::string>::const_iterator const  Channel::beginMem(){
+    return (_channelMembers.begin());
+}
+
+std::vector<std::string>::const_iterator  const Channel::endMem() {
+    return (_channelMembers.end());
 }
 
 Channel::~Channel(){};

@@ -6,7 +6,7 @@
 /*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 03:22:18 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/02/23 04:09:27 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/02/24 17:30:49 by blind-eagle      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ std::string     Server::getCurrentDate(){
     // Return the current date as a string
     return std::string(buf);
 }
+
+
 
 bool        Server::checkIfNickNameAlreadyUsed(std::string nickName) const{
     std::vector<User>::const_iterator it;

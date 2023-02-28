@@ -6,12 +6,12 @@
 #    By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/02/08 15:11:24 by blind-eagle       #+#    #+#              #
-#    Updated: 2023/02/23 17:58:41 by blind-eagle      ###   ########.fr        #
+#    Updated: 2023/02/28 15:49:02 by blind-eagle      ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
-NAME = ft_irc
+NAME = ircserv
 
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 

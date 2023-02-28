@@ -6,7 +6,7 @@
 /*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 03:46:06 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/02/17 17:58:46 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/02/27 14:58:40 by blind-eagle      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@ class Channel{
     bool                         _secretChannel;
     bool                         _allowOutMessages;
     bool                         _operatorsTopicControl;
+
+    
+
 
     public  :
     Channel();
@@ -78,6 +81,10 @@ class Channel{
     void    addUserToChannelOperators(std::string nickName);
     void    deleteUserFromChannelOperators(std::string nickName);
     bool    changeUserNickName(std::string currentNickName, std::string newNickName);
+
+
+    std::vector<std::string>::const_iterator const beginMem();
+    std::vector<std::string>::const_iterator const endMem() ;
 };
 
 
