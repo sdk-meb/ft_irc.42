@@ -6,7 +6,7 @@
 /*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 03:46:06 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/02/27 14:58:40 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/03/01 03:54:48 by blind-eagle      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ class Channel{
 
     bool     checkSuperUserPermission(std::string user);
     bool     checkSetTopicPermission(std::string user);
-    bool     checkMemberExistence(std::string memberName);
+    bool     checkMemberExistence(std::string memberName) const;
     bool     checkIfChannelIsFull();
-    bool     checkIfUserAllowedToMessageChannel(std::string user);
+    bool     checkIfUserAllowedToMessageChannel(std::string user) const;
 
     //^ -Manage Channel- :
     
@@ -83,8 +83,8 @@ class Channel{
     bool    changeUserNickName(std::string currentNickName, std::string newNickName);
 
 
-    std::vector<std::string>::const_iterator const beginMem();
-    std::vector<std::string>::const_iterator const endMem() ;
+    std::vector<std::string>::const_iterator const beginMem() const;
+    std::vector<std::string>::const_iterator const endMem() const;
 };
 
 

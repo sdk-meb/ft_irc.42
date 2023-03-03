@@ -6,7 +6,7 @@
 /*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 12:28:55 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/02/28 17:32:12 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/03/03 18:07:41 by blind-eagle      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,27 +326,54 @@ int   Server::parser(std::string buffer, int index){
         }
         else if (command == "PART"){
             std::cout << "The Command Is : PART" << std::endl;
+            std::vector<std::string> channels = getVectorOfArgs(line, &(posPointer));
+            std::string              partReasonMessage = getWordInLine(line, &(posPointer));
+            part(&_users[index], channels, partReasonMessage);   
         }
         else if (command == "PING"){
             std::cout << "The Command Is : PING" << std::endl;
+            std::string message = getWordInLine(line, &(posPointer));
+            pong(&_users[index], message);
         }
         else if (command == "LIST"){
             std::cout << "The Command Is : LIST" << std::endl;
+            std::vector<std::string>    channelsArgs = getVectorOfArgs(line, &(posPointer));
+            list(&_users[index], channelsArgs);
         }
         else if (command == "KICK"){
             std::cout << "The Command Is : KICK" << std::endl;
+            std::string  channel = getWordInLine(line, &(posPointer));
+            std::string  target = getWordInLine(line, &(posPointer));
+            std::string  reason = getWordInLine(line, &(posPointer));
+            kick(&_users[index], channel, target, reason);
+        }
+        else if (command == "NAMES"){
+            std::string channel = getWordInLine(line, &(posPointer));
+            names(&_users[index], channel);
         }
         else if (command == "PRIVMSG"){
             std::cout << "The Command Is : PRIVMSG" << std::endl;
+            std::vector<std::string>  targets = getVectorOfArgs(line, &(posPointer));
+            std::string               message = getWordInLine(line, &(posPointer));
+            privmsg(&_users[index], targets, message);
         }
         else if (command == "MODE"){
             std::cout << "The Command Is : MODE" << std::endl;
+            std::string target = getWordInLine(line, &(posPointer));
+            std::vector<std::string> args = getVectorOfArgs(line, &(posPointer));
+            mode(&_users[index], target, args);
         }
         else if (command == "NOTICE"){
             std::cout << "The Command Is : NOTICE" << std::endl;
+            std::vector<std::string>    targets = getVectorOfArgs(line, &(posPointer));
+            std::string                 NoticeMessage = getWordInLine(line, &(posPointer));
+            notice(&_users[index], targets, NoticeMessage);
         }
         else if (command == "TOPIC"){
             std::cout << "The Command Is : TOPIC" << std::endl;
+            std::string channel = getWordInLine(line, &(posPointer));
+            std::string chanTopic = getWordInLine(line, &(posPointer));
+            topic(&_users[index], channel, chanTopic);
         }
         i += 2;
         line.erase();
@@ -374,6 +401,8 @@ bool    Server::checkCommandValidation(std::string command){
     if (command == "QUIT")
         return (true);
     if (command == "KICK")
+        return (true);
+    if (command == "NAMES")
         return (true);
     if (command == "LIST")
         return (true);
