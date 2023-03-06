@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
+/*   By: bben-aou <bben-aou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 12:28:52 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/03/03 17:03:19 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/03/06 17:48:55 by bben-aou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <map>
 #include <poll.h>
 #include <sys/socket.h>
 #include <sstream>
@@ -34,6 +35,21 @@
 
 #define MAXUSERS 500
 
+typedef struct ltime{
+    int     hours;
+    int     minutes;
+}ltime;
+
+
+# define RED   "\033[31m"
+# define GRN   "\033[32m"
+# define YEL   "\033[33m"
+# define BLU   "\033[34m"
+# define MAG   "\033[35m"
+# define CYN   "\033[36m"
+# define WHT   "\033[37m"
+# define RESET "\033[0m"
+
 class   Server{
     private :
         std::string  _serverName;
@@ -45,6 +61,15 @@ class   Server{
         std::vector<pollfd>  _fds;
         std::vector<User>    _users;
         std::vector<Channel> _channels;
+
+        // ^ bot 
+        // struct time;
+        void    saveLoginTime(User * user);
+        void    help(User * user);
+        void    generateTopic(User * user, std::string channelType);
+        void    buildBotResponse(std::string predfix, User const * recipientUser, std::string data) const;
+        // std::map<std::string, ltime> logtime;
+         std::map<std::string, ltime> my_map;
         
         //! - Commands: 
         void    quit(User* user, std::string message);
@@ -60,7 +85,10 @@ class   Server{
         void    mode(User* user, std::string target, std::vector<std::string> modes);
         void    topic(User* user, std::string channel, std::string topic);
         void    kick(User *user, std::string channel, std::string target, std::string reason);
-        void    names(User * user, std::string channel);
+        void    names(User * user, std::string channel); // V1 : not work correctly
+        void    names(User * user, std::vector<std::string> & channels); // V2 : works perfectly
+        void    invite(User * user, std::string invitedUser, std::string channel);
+        void    bot(User * user, std::string option, std::string channelType);
 
     public  :
         Server();

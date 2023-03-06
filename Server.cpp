@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
+/*   By: bben-aou <bben-aou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 12:28:55 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/03/03 18:07:41 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/03/06 17:53:16 by bben-aou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,10 +304,10 @@ int   Server::parser(std::string buffer, int index){
             std::string     realName = getWordInLine(line, &(posPointer));
             user(&_users[index], userName, hostName, serverName, realName);
         }
-        // else if (!_users[index].isAuthenticated()){
-        //     userNotLoginIn(&_users[index]);
-        //     std::cout << "The User is not logged in !" << std::endl;
-        // }
+        else if (!_users[index].isAuthenticated()){
+            userNotLoginIn(&_users[index]);
+            std::cout << "The User is not logged in !" << std::endl;
+        }
         else if (command == "JOIN"){
             // std::cout << "The Command Is : JOIN" << std::endl;
             std::vector<std::string> argVector;
@@ -317,11 +317,17 @@ int   Server::parser(std::string buffer, int index){
             //     std::cout << *it << std::endl;
             join(&_users[index],argVector);
         }
+        else if (command == "INVITE"){
+            std::string     invitedUser = getWordInLine(line, &(posPointer));
+            std::string     channel = getWordInLine(line, &(posPointer));
+            invite(&_users[index], invitedUser, channel);   
+        }
+        
         else if (command == "QUIT"){
             std::cout << "The Command Is : QUIT" << std::endl;
             std::string quitMessage = getWordInLine(line, &(posPointer));
             std::cout << quitMessage << std::endl;
-            // quit(&_users[index], quitMessage);
+            quit(&_users[index], quitMessage);
             return (1);
         }
         else if (command == "PART"){
@@ -348,8 +354,12 @@ int   Server::parser(std::string buffer, int index){
             kick(&_users[index], channel, target, reason);
         }
         else if (command == "NAMES"){
-            std::string channel = getWordInLine(line, &(posPointer));
-            names(&_users[index], channel);
+            // std::string channel = getWordInLine(line, &(posPointer));
+            // names(&_users[index], channel);
+
+            std::vector<std::string> channels = getVectorOfArgs(line, &(posPointer));
+            names(&_users[index], channels);
+            
         }
         else if (command == "PRIVMSG"){
             std::cout << "The Command Is : PRIVMSG" << std::endl;
@@ -375,6 +385,12 @@ int   Server::parser(std::string buffer, int index){
             std::string chanTopic = getWordInLine(line, &(posPointer));
             topic(&_users[index], channel, chanTopic);
         }
+        else if (command == "BOT"){
+            std::string     service = getWordInLine(line, &(posPointer));
+            std::string     channelType = getWordInLine(line, &(posPointer));
+            bot(&_users[index], service, channelType);
+            std::cout << "sould be done !" << std::endl; 
+        }
         i += 2;
         line.erase();
     }
@@ -391,6 +407,8 @@ bool    Server::checkCommandValidation(std::string command){
     if (command == "PING")
         return (true);
     if (command == "JOIN")
+        return (true);
+    if (command == "INVITE")
         return (true);
     if (command == "PART")
         return (true);
@@ -409,6 +427,8 @@ bool    Server::checkCommandValidation(std::string command){
     if (command == "TOPIC")
         return (true);
     if (command == "MODE")
+        return (true);
+    if (command == "BOT")
         return (true);
     return (false);
 }

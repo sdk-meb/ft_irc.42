@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
+/*   By: bben-aou <bben-aou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 03:46:09 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/03/01 03:54:35 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/03/06 09:23:29 by bben-aou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ Channel::Channel(){
     this->_channelOperators         = std::vector<std::string>();
     this->_privateChannel        = false;
     this->_secretChannel         = false;
+    this->_inviteOnlyChannel     = false;
     this->_allowOutMessages      = false;
     this->_operatorsTopicControl = true;
 }
@@ -33,6 +34,7 @@ Channel::Channel(std::string channelName){
     this->_channelOperators         = std::vector<std::string>();
     this->_privateChannel        = false;
     this->_secretChannel         = false;
+    this->_inviteOnlyChannel     = false;
     this->_allowOutMessages      = false;
     this->_operatorsTopicControl = true;
 }
@@ -42,9 +44,10 @@ Channel::Channel(const Channel &obj){
     this->_channelTopic           = obj._channelTopic;       
     this->_maxMembers             = obj._maxMembers;         
     this->_channelMembers         = obj._channelMembers;       
-    this->_channelOperators          = obj._channelOperators;        
+    this->_channelOperators       = obj._channelOperators;        
     this->_privateChannel         = obj._privateChannel;       
-    this->_secretChannel          = obj._secretChannel;        
+    this->_secretChannel          = obj._secretChannel;
+    this->_inviteOnlyChannel      = obj._inviteOnlyChannel;        
     this->_allowOutMessages       = obj._allowOutMessages;     
     this->_operatorsTopicControl  = obj._operatorsTopicControl;
 }
@@ -54,9 +57,10 @@ Channel&     Channel::operator = (const Channel &obj){
     this->_channelTopic           = obj._channelTopic;       
     this->_maxMembers             = obj._maxMembers;         
     this->_channelMembers         = obj._channelMembers;       
-    this->_channelOperators          = obj._channelOperators;        
+    this->_channelOperators       = obj._channelOperators;        
     this->_privateChannel         = obj._privateChannel;       
-    this->_secretChannel          = obj._secretChannel;        
+    this->_secretChannel          = obj._secretChannel;  
+    this->_inviteOnlyChannel      = obj._inviteOnlyChannel;        
     this->_allowOutMessages       = obj._allowOutMessages;     
     this->_operatorsTopicControl  = obj._operatorsTopicControl;
     return (*this);
@@ -95,6 +99,10 @@ bool          Channel::getSecretChannelStatus() const{
 
 bool        Channel::getAllowOutMessageStatus() const{
     return (_allowOutMessages);
+}
+
+bool        Channel::getInviteOnlyChannelStatus() const{
+    return (_inviteOnlyChannel);
 }
 
 bool       Channel::getOperatorsTopicControlStatus()const{
@@ -141,6 +149,14 @@ bool    Channel::setOperatorsTopicControl(std::string user, bool status){
 bool    Channel::setPrivateChannel(std::string user, bool status){
     if (checkSuperUserPermission(user)){
         _privateChannel = status;
+        return (true);
+    }
+    return (false);
+}
+
+bool    Channel::setInviteOnlyChannel(std::string user, bool status){
+    if (checkSuperUserPermission(user)){
+        _inviteOnlyChannel = status;
         return (true);
     }
     return (false);

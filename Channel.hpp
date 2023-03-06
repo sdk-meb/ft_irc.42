@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
+/*   By: bben-aou <bben-aou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 03:46:06 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/03/01 03:54:48 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/03/06 09:32:17 by bben-aou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class Channel{
     std::vector<std::string>     _channelOperators;
     bool                         _privateChannel;
     bool                         _secretChannel;
+    bool                         _inviteOnlyChannel;
     bool                         _allowOutMessages;
     bool                         _operatorsTopicControl;
 
@@ -51,6 +52,7 @@ class Channel{
     bool    setOperatorsTopicControl(std::string user, bool status);
     bool    setPrivateChannel(std::string user, bool status);
     bool    setSecretChannel(std::string user, bool status);
+    bool    setInviteOnlyChannel(std::string user, bool status);
     bool    setAllowOutMessage(std::string user, bool status);
     
 
@@ -63,6 +65,7 @@ class Channel{
     size_t                     getMaxMembers() const;
     bool                       getPrivateChannelStatus()  const;
     bool                       getSecretChannelStatus()   const;
+    bool                       getInviteOnlyChannelStatus()   const;
     bool                       getAllowOutMessageStatus() const;
     bool                       getOperatorsTopicControlStatus() const;
 
