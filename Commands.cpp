@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bben-aou <bben-aou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 02:53:28 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/03/06 15:02:17 by bben-aou         ###   ########.fr       */
+/*   Updated: 2023/03/07 17:56:25 by blind-eagle      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -654,66 +654,6 @@ void    Server::kick(User * user, std::string channel, std::string target, std::
     }
 }
 
-// & ------------- Command : + NAMES + ---------------------- 
-
-// void    Server::names(User * user, std::string channel){
-//     std::vector<Channel>::iterator  chanIt;
-//     std::vector<User>::iterator     userIt;
-//     std::string     channelPrefix;
-    
-//     for (chanIt = _channels.begin(); chanIt != _channels.end(); ++chanIt){
-//         if (chanIt->getChannelName() == channel)
-//             break;
-//     }
-//     if (chanIt == _channels.end()){
-//         buildResponseToSend(NULL, user, repliesMessage("366", user) + channel + " :End of /NAMES list");
-//         return;
-//     }
-//     else if (!(chanIt->checkMemberExistence(user->getNickName())) && (chanIt->getPrivateChannelStatus() || chanIt->getSecretChannelStatus())){
-//         if (chanIt->getPrivateChannelStatus()){
-//             buildResponseToSend(NULL, user, repliesMessage("366", user) + channel + " *" + " :End of /NAMES list");
-//             return;
-//         }
-//         else if (chanIt->getSecretChannelStatus()){
-//             buildResponseToSend(NULL, user, repliesMessage("366", user) + channel + " @" + " :End of NAMES list");
-//             return;
-//         }
-//     }
-//     if (!channel.empty()){
-//         if (chanIt->getPrivateChannelStatus())
-//             channelPrefix = "* ";
-//         else if (chanIt->getSecretChannelStatus())
-//             channelPrefix = "@ ";
-//         else
-//             channelPrefix = "= ";
-//         for (userIt = _users.begin(); userIt != _users.end(); ++userIt){
-//             if (chanIt->checkMemberExistence(userIt->getNickName()))
-//                 buildResponseToSend(NULL, user, repliesMessage("353", user) + channelPrefix + channel + " : " + userIt->getNickName());
-//         }
-//         buildResponseToSend(NULL, user, repliesMessage("366", user) +  channel + " :End of NAMES list");
-//     }
-//     else{
-//         for (chanIt = _channels.begin(); chanIt != _channels.end(); ++chanIt){
-//             if (!(chanIt->checkMemberExistence(user->getNickName())) && (chanIt->getPrivateChannelStatus() || chanIt->getSecretChannelStatus())){
-//                 if (chanIt->getPrivateChannelStatus()){
-//                     buildResponseToSend(NULL, user, repliesMessage("366", user) + "*" + " :End of /NAMES list");
-//                 return;
-//                 }
-//                 else if (chanIt->getSecretChannelStatus()){
-//                     buildResponseToSend(NULL, user, repliesMessage("366", user)  + "@" + " :End of NAMES list");
-//                     return;
-//                 }
-//             }
-//             // else if (){
-                
-//             // }
-            
-//         }
-//         buildResponseToSend(NULL, user, repliesMessage("461", user) + "NAMES :Not enough parameters");
-//         return;
-//     }   
-// }
-
 
 // & ------------- Command : + NAMES V2+ ---------------------- 
 
@@ -822,4 +762,10 @@ void    Server::invite(User * user, std::string invitedUser, std::string channel
         return;
     }
 }
-//comment for test
+
+
+// & ------------- Uknown Command --------------------------
+
+void    Server::uknownCommandRpl(User * user, std::string command) const{
+    buildResponseToSend(NULL, user, repliesMessage("421", user) + command + " ::Unknown command");
+}

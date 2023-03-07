@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bben-aou <bben-aou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 12:28:52 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/03/06 17:48:55 by bben-aou         ###   ########.fr       */
+/*   Updated: 2023/03/07 17:54:36 by blind-eagle      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ class   Server{
         void    names(User * user, std::string channel); // V1 : not work correctly
         void    names(User * user, std::vector<std::string> & channels); // V2 : works perfectly
         void    invite(User * user, std::string invitedUser, std::string channel);
+        void    uknownCommandRpl(User *user, std::string command) const;
         void    bot(User * user, std::string option, std::string channelType);
 
     public  :

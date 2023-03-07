@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bben-aou <bben-aou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 12:28:55 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/03/06 17:53:16 by bben-aou         ###   ########.fr       */
+/*   Updated: 2023/03/07 17:59:24 by blind-eagle      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,31 +144,16 @@ void    Server::handlingEvents(){
         std::vector<pollfd>::iterator  it = this->_fds.begin();
         int     readStatus = 1;
         int     index = 0;
-        it++;
-        // ================================================== //
-        /* - part to receive one Message each time  - */
-        
-        // if (it->revents & POLLIN){
-        //     for (int i = 0; i < 4096; i++)
-		// 			buffer[i] = 0;
-        //     readStatus = read(it->fd, buffer, 4096);
-        //     printf("%s\n",buffer);
-        // }
-        // ================================================== //
-        
+        it++;        
         while(it != this->_fds.end()){
             if (it->revents & POLLIN){
                 readStatus = 1;
                 memset(buffer,'\0',4096);
                 readStatus = read(it->fd, buffer, 4096);
-                // printf("first : %s\n",buffer);
                 this->_users[index].joinPollExtractedData(buffer);
-                // std::cout << "Test  :" << _users[index].getPollExtractedData();
-                //optional :
-                // printf("The buffer : %s\n",buffer);
                 // there is nothing to read from the client and the file descriptor is closed :
                 if (readStatus == 0){
-                    printf("fd : %d | revents: %d\n", it->fd, it->revents);
+                    printf("Fd is = %d |  Revents is = %d\n", it->fd, it->revents);
                     quit(&_users[index],"");
                     close(it->fd);
                     it = this->_fds.erase(it);
@@ -177,28 +162,17 @@ void    Server::handlingEvents(){
                     index = 0;
                     continue;
                 }
-                // else{
-                //     command = itsCommand(_users[index].getPollExtractedData());
-                //     std::cout  << "start the pollData is : " << _users[index].getPollExtractedData().substr(0, command) << " end "<< std::endl; 
-                //     std::cout << "Size : " <<  _users[index].getPollExtractedData().size() << "\n";
-                // }
 
                 else if (int command = itsCommand(_users[index].getPollExtractedData())){
-                    // std::cout << "number : " << command << std::endl;
-                    // std::cout << "Size   : " << _users[index].getPollExtractedData().size() << std::endl;
-                    // std::cout << "Yes it's command!" << std::endl;
-                    // need to handle the commands;
-                    // std::cout << "Test  :" << _users[index].getPollExtractedData() << std::endl;
                     if (parser(_users[index].getPollExtractedData().substr(0, command), index) == 1){
-						printf("fd = %d et revent = %d\n", it->fd, it->revents);
+						printf("Fd is = %d |  Revents is = %d\n", it->fd, it->revents);
                         close(it->fd);
                         it = _fds.erase(it);
                         _users.erase(_users.begin() + index);
                         it = _fds.begin() + 1;
                         index = 0;
                         continue;
-                    }
-                        
+                    }  
                     _users[index].setPollExtractedData(_users[index].getPollExtractedData().substr(command + 1, _users[index].getPollExtractedData().size() - (command + 1)));
                 }
             }
@@ -266,9 +240,6 @@ int   Server::parser(std::string buffer, int index){
     std::string     command;
     std::string     line;
     
-    // std::cout << "The buffer : "<< buffer << std::endl;
-    // std::cout  << "the pollData is : " << _users[index].getPollExtractedData() << std::endl; 
-    
     while (i < buffer.size()){
         int posPointer = 0;
         while (buffer[i] && buffer[i] != '\r'){
@@ -284,10 +255,11 @@ int   Server::parser(std::string buffer, int index){
                 command = getWordInLine(line,&(posPointer));
         }
         std::cout << " Command is : " << command << std::endl;
-        // if (!checkCommandValidation(command))
-        // {
-        //     std::cout << "Invalid Command !" << std::endl;
-        // }
+        if (!checkCommandValidation(command))
+        {
+            uknownCommandRpl(&_users[index], command);
+            std::cout << "Invalid Command !" << std::endl;
+        }
         if (command == "PASS"){
             std::cout << "The Command Is : PASS" << std::endl;
             pass(&_users[index], getWordInLine(line,&(posPointer)));
@@ -309,12 +281,10 @@ int   Server::parser(std::string buffer, int index){
             std::cout << "The User is not logged in !" << std::endl;
         }
         else if (command == "JOIN"){
-            // std::cout << "The Command Is : JOIN" << std::endl;
+            std::cout << "The Command Is : JOIN" << std::endl;
             std::vector<std::string> argVector;
             std::vector<std::string>::const_iterator it;
             argVector = getVectorOfArgs(line, &(posPointer));
-            // for (it = argVector.begin(); it != argVector.end(); ++it)
-            //     std::cout << *it << std::endl;
             join(&_users[index],argVector);
         }
         else if (command == "INVITE"){
@@ -354,9 +324,7 @@ int   Server::parser(std::string buffer, int index){
             kick(&_users[index], channel, target, reason);
         }
         else if (command == "NAMES"){
-            // std::string channel = getWordInLine(line, &(posPointer));
-            // names(&_users[index], channel);
-
+            std::cout << "The Command Is : NAMES" << std::endl;
             std::vector<std::string> channels = getVectorOfArgs(line, &(posPointer));
             names(&_users[index], channels);
             
@@ -386,10 +354,10 @@ int   Server::parser(std::string buffer, int index){
             topic(&_users[index], channel, chanTopic);
         }
         else if (command == "BOT"){
+            std::cout << "BOT Service :" << std::endl;
             std::string     service = getWordInLine(line, &(posPointer));
             std::string     channelType = getWordInLine(line, &(posPointer));
             bot(&_users[index], service, channelType);
-            std::cout << "sould be done !" << std::endl; 
         }
         i += 2;
         line.erase();
