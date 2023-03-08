@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
+/*   By: bben-aou <bben-aou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/05 12:28:55 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/03/07 17:59:24 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/03/08 11:51:40 by bben-aou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,10 @@ void    Server::establishListening(){
         std::cerr << "Error : Creation of Socket Failed !" << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    // Set the socket to non-blocking mode
+    {
+        int optvul = 1;
+        setsockopt (socketFd.fd, SOL_SOCKET, SO_REUSEADDR, &optvul, sizeof(optvul) );
+    }// Set the socket to non-blocking mode
     fcntl(socketFd.fd, F_SETFL, O_NONBLOCK);
     
     // Filling the struct members with data 
@@ -105,7 +107,7 @@ void    Server::handlingEvents(){
 
     while (true){
         // reach for the file descriptors who's available to be read or write in 
-        pollStatus = poll(&(this->_fds[0]), this->_fds.size(), 0);
+        pollStatus = poll(this->_fds.data(), this->_fds.size(), 0);
         
         // check Poll() status : error case
         if (pollStatus < 0){
@@ -236,7 +238,7 @@ std::vector<std::string>     Server::getVectorOfArgs(std::string line, int* posP
 
 
 int   Server::parser(std::string buffer, int index){
-    int  i = 0;
+    size_t  i = 0;
     std::string     command;
     std::string     line;
     
@@ -400,44 +402,6 @@ bool    Server::checkCommandValidation(std::string command){
         return (true);
     return (false);
 }
-
-void    Server::sendResponse(pollfd fds, std::string data) const{
-    std::string     prefix;
-    std::string     response;
-    int             prefixPos;
-    prefixPos = 0;
-    if (data[0] == ':'){
-        prefixPos = 1;
-        prefix = getWordInLine(data, &prefixPos);
-        prefix = ":" + prefix; 
-    }
-    int i = prefixPos;
-    while (data[i]){
-        response += prefix;
-        while (response.size() < 510 && data[i]){
-            response += data[i];
-            i++;
-        }
-        response += '\r';
-        response += '\n';
-        send(fds.fd, response.c_str(), response.size(),0);
-        response.clear();
-    }
-}
-
-//* -Utils- :
-
-std::string     Server::generatePrefix(User const *user) const{
-    std::string  prefix = "";
-    if (user == NULL){
-        prefix = ":" + _serverName + " ";
-        return (prefix);
-    }
-    prefix.append(":" + user->getNickName() + "!" + user->getUserName());
-    prefix.append("@" + user->getHostName() + " ");
-    return (prefix);
-}
-
 
 
 Server::~Server(){}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Commands.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blind-eagle <blind-eagle@student.42.fr>    +#+  +:+       +#+        */
+/*   By: bben-aou <bben-aou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 02:53:28 by blind-eagle       #+#    #+#             */
-/*   Updated: 2023/03/07 17:56:25 by blind-eagle      ###   ########.fr       */
+/*   Updated: 2023/03/08 11:43:06 by bben-aou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,73 +39,6 @@ void    Server::quit(User* user,std::string message){
     }
 }
 
-
-
-std::string     Server::repliesMessage(std::string errorStatus, User const *user) const {
-
-    std::string  errorMsg;
-    if (user->getNickName().empty())
-        errorMsg = errorStatus + " ";
-    else
-        errorMsg = errorStatus + " " + user->getNickName() + " ";
-    return (errorMsg);
-}
-
-void        Server::buildResponseToSend(User const * senderUser, User const * recipientUser, std::string data) const{
-    std::string  dataToSend;
-    dataToSend = generatePrefix(senderUser) + data;
-    sendResponse(recipientUser->getPollFds(), dataToSend);
-}
-
-void    Server::buildResponseToSendToChanMembers(User const * senderUser, Channel const  & channel, std::string data) const{
-    std::vector<std::string>::const_iterator it;
-    for (it = channel.beginMem(); it != channel.endMem() ; ++it){
-        if (senderUser->getNickName() != *it)
-            sendResponse(getUser(*it)->getPollFds(),data);
-    }
-}
-
-User *          Server::getUser(std::string nickName){
-    std::vector<User>::iterator it;
-
-    for (it = _users.begin() ; it != _users.end(); ++it){
-        if (it->getNickName() == nickName)
-            return (&*it);
-    }
-    return (NULL);
-}
-
-const User *    Server::getUser(std::string nickName) const{
-    std::vector<User>::const_iterator it;
-
-    for (it = _users.begin() ; it != _users.end(); ++it){
-        if (it->getNickName() == nickName)
-            return (&*it);
-    }
-    return (NULL);
-}
-
-void    Server::welcome(User * user){
-    buildResponseToSend(NULL, user , repliesMessage("001", user) + "Welcome to the Internet Relay Network " + user->getNickName() + "!" + user->getUserName() + "@" + user->getHostName());
-    buildResponseToSend(NULL, user, repliesMessage("002", user) + "Your host is " + _serverName + ", running version 13.37");
-    buildResponseToSend(NULL, user, repliesMessage("003", user) + "This server was created " + getCurrentDate());
-    buildResponseToSend(NULL, user, repliesMessage("004", user) + _serverName + " 13.37 i k nlov");
-}
-
-bool    Server::checkIfNickNameValid(std::string nickName) const{
-    std::string str = nickName;
-    int i;
-    if ( str.size() > 9 || str.empty())
-        return (false);
-    if (!(isalpha(str[0]) || ispunct(str[0])))
-        return (false);
-    for (i = 1 ; i < str.length() ; i++){
-        if (!(isalpha(str[i]) || isdigit(str[i]) || ispunct(str[i]) || str[i] == '_' || str[i] == '-'))
-            return (false);
-    }
-    return (true);
-}
-
 // & ------------- Command : + PASS + ---------------------- 
     
 void    Server::pass(User* user, std::string password){
@@ -116,7 +49,6 @@ void    Server::pass(User* user, std::string password){
     else if (password != this->_password)
         buildResponseToSend(NULL, user, repliesMessage("464", user) + ":Password incorrect");
     else{
-            std::cout << "i Should do that !" << std::endl;
         user->setPassword(password);
         if (user->Authenticate(this->_password)){
             welcome(user);
